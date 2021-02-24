@@ -97,7 +97,7 @@ plot <-
 plot +
   ggtitle("Casos de covid ", subprefeitura) +
   scale_x_date(date_breaks = "months" , date_labels = "%b-%y") +
-  labs(caption = "Dados obtidos de http://tabnet.saude.prefeitura.sp.gov.br/cgi/tabcgi.exe?secretarias/saude/TABNET/RCOVID19/covid19.def \n Opções selecionadas Ano Mês dia Notificação, Subprefeitura, data(todas disponíveis) e casos confirmados \n Os dados foram filtrados para até a ultima semana completa ") +
+  labs(caption = "Dados obtidos de http://tabnet.saude.prefeitura.sp.gov.br/cgi/tabcgi.exe?secretarias/saude/TABNET/RCOVID19/covid19.def \n Opções selecionadas Ano Mês dia Notificação, Subprefeitura, data(todas disponíveis) e casos confirmados \n Os dados foram filtrados para até a ultima semana completa \n Link: https://github.com/vvitorveloso/Casos_Covid_Subs/") +
 #  labs(caption = "") + 
   xlab("")+
   ggsave(

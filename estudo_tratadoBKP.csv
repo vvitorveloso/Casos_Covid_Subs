@@ -1,0 +1,33 @@
+,Reduce.rbind..lista.,,mapa_cidade.NOME,mapa_cidade.COD_SUBPRE
+init,Aricanduva.Formosa.Carrão,26,VILA PRUDENTE,29
+X,Butantã,10,SAPOPEMBA,32
+X.1,Campo.Limpo,17,FREGUESIA-BRASILANDIA,3
+X.2,Capela.do.Socorro,19,CASA VERDE-CACHOEIRINHA,4
+X.3,Casa.Verde.Cachoeirinha,4,SANTANA-TUCURUVI,5
+X.4,Cidade.Ademar,16,JACANA-TREMEMBE,6
+X.5,Cidade.Tiradentes,31,VILA MARIA-VILA GUILHERME,7
+X.6,Ermelino.Matarazzo,22,PENHA,21
+X.7,Freguesia.Brasilândia,3,ERMELINO MATARAZZO,22
+X.8,Guaianases,28,SAO MIGUEL,23
+X.9,Ipiranga,13,ITAIM PAULISTA,24
+X.10,Itaim.Paulista,24,ITAQUERA,27
+X.11,Itaquera,27,GUAIANAZES,28
+X.12,Jabaquara,15,LAPA,8
+X.13,Jaçanã.Tremembé,6,SE,9
+X.14,Lapa,8,MOOCA,25
+X.15,M.Boi.Mirim,18,ARICANDUVA,26
+X.16,Mooca,25,SAO MATEUS,30
+X.17,Parelheiros,20,IPIRANGA,13
+X.18,Penha,21,VILA MARIANA,12
+X.19,Perus,1,BUTANTA,10
+X.20,Pinheiros,11,PINHEIROS,11
+X.21,Pirituba,2,CAMPO LIMPO,17
+X.22,Santana.Tucuruvi,5,M'BOI MIRIM,18
+X.23,Santo.Amaro,14,CAPELA DO SOCORRO,19
+X.24,São.Mateus,30,CIDADE ADEMAR,16
+X.25,São.Miguel,23,PARELHEIROS,20
+X.26,Sapopemba,32,SANTO AMARO,14
+X.27,Sé,9,CIDADE TIRADENTES,31
+X.28,Vila.Maria.Vila.Guilherme,7,PERUS,1
+X.29,Vila.Mariana,12,JABAQUARA,15
+X.30,Vila.Prudente,29,PIRITUBA,2

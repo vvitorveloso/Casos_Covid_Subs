@@ -1,0 +1,33 @@
+Sub,Cod,mapa_cidade.NOME,mapa_cidade.COD_SUBPRE
+Aricanduva.Formosa.Carrão,26,VILA PRUDENTE,29
+Butantã,10,SAPOPEMBA,32
+Campo.Limpo,17,FREGUESIA-BRASILANDIA,3
+Capela.do.Socorro,19,CASA VERDE-CACHOEIRINHA,4
+Casa.Verde.Cachoeirinha,4,SANTANA-TUCURUVI,5
+Cidade.Ademar,16,JACANA-TREMEMBE,6
+Cidade.Tiradentes,31,VILA MARIA-VILA GUILHERME,7
+Ermelino.Matarazzo,22,PENHA,21
+Freguesia.Brasilândia,3,ERMELINO MATARAZZO,22
+Guaianases,28,SAO MIGUEL,23
+Ipiranga,13,ITAIM PAULISTA,24
+Itaim.Paulista,24,ITAQUERA,27
+Itaquera,27,GUAIANAZES,28
+Jabaquara,15,LAPA,8
+Jaçanã.Tremembé,6,SE,9
+Lapa,8,MOOCA,25
+M.Boi.Mirim,18,ARICANDUVA,26
+Mooca,25,SAO MATEUS,30
+Parelheiros,20,IPIRANGA,13
+Penha,21,VILA MARIANA,12
+Perus,1,BUTANTA,10
+Pinheiros,11,PINHEIROS,11
+Pirituba,2,CAMPO LIMPO,17
+Santana.Tucuruvi,5,M'BOI MIRIM,18
+Santo.Amaro,14,CAPELA DO SOCORRO,19
+São.Mateus,30,CIDADE ADEMAR,16
+São.Miguel,23,PARELHEIROS,20
+Sapopemba,32,SANTO AMARO,14
+Sé,9,CIDADE TIRADENTES,31
+Vila.Maria.Vila.Guilherme,7,PERUS,1
+Vila.Mariana,12,JABAQUARA,15
+Vila.Prudente,29,PIRITUBA,2

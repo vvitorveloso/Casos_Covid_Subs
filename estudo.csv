@@ -1,0 +1,33 @@
+,Reduce.rbind..lista.,,mapa_cidade.NOME,mapa_cidade.COD_SUBPRE
+init,Aricanduva.Formosa.Carrão,,VILA PRUDENTE,29
+X,Butantã,,SAPOPEMBA,32
+X.1,Campo.Limpo,,FREGUESIA-BRASILANDIA,3
+X.2,Capela.do.Socorro,,CASA VERDE-CACHOEIRINHA,4
+X.3,Casa.Verde.Cachoeirinha,,SANTANA-TUCURUVI,5
+X.4,Cidade.Ademar,,JACANA-TREMEMBE,6
+X.5,Cidade.Tiradentes,,VILA MARIA-VILA GUILHERME,7
+X.6,Ermelino.Matarazzo,,PENHA,21
+X.7,Freguesia.Brasilândia,,ERMELINO MATARAZZO,22
+X.8,Guaianases,,SAO MIGUEL,23
+X.9,Ipiranga,,ITAIM PAULISTA,24
+X.10,Itaim.Paulista,,ITAQUERA,27
+X.11,Itaquera,,GUAIANAZES,28
+X.12,Jabaquara,,LAPA,8
+X.13,Jaçanã.Tremembé,,SE,9
+X.14,Lapa,,MOOCA,25
+X.15,M.Boi.Mirim,,ARICANDUVA,26
+X.16,Mooca,,SAO MATEUS,30
+X.17,Parelheiros,,IPIRANGA,13
+X.18,Penha,,VILA MARIANA,12
+X.19,Perus,,BUTANTA,10
+X.20,Pinheiros,,PINHEIROS,11
+X.21,Pirituba,,CAMPO LIMPO,17
+X.22,Santana.Tucuruvi,,M'BOI MIRIM,18
+X.23,Santo.Amaro,,CAPELA DO SOCORRO,19
+X.24,São.Mateus,,CIDADE ADEMAR,16
+X.25,São.Miguel,,PARELHEIROS,20
+X.26,Sapopemba,,SANTO AMARO,14
+X.27,Sé,,CIDADE TIRADENTES,31
+X.28,Vila.Maria.Vila.Guilherme,,PERUS,1
+X.29,Vila.Mariana,,JABAQUARA,15
+X.30,Vila.Prudente,,PIRITUBA,2

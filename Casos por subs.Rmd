@@ -1,0 +1,178 @@
+---
+title: "COVID_POR_SUB"
+author: "Vitor Veloso"
+date: "18/02/2021"
+output: pdf_document
+editor_options: 
+  chunk_output_type: console
+---
+
+<http://tabnet.saude.prefeitura.sp.gov.br/cgi/tabcgi.exe?secretarias/saude/TABNET/RCOVID19/covid19.def>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\#\#COVID POR SUB
+
+```{r installer}
+
+# install.packages("devtools")
+# install.packages("tidyverse")
+
+library(tidyverse)
+library(devtools)
+
+#devtools::install_github("ajdamico/lodown")
+
+```
+
+```{r librarys}
+#load def files
+#install.packages("remotes")
+#remotes::install_github("dlill/conveniencefunctions")
+
+
+library(tidyverse)
+library(lubridate)
+
+script_dir = dirname(rstudioapi::getActiveDocumentContext()$path)
+
+
+
+```
+
+
+```{r casos e plotagem}
+# casos <- read.csv2(paste0(script_dir,"/A191206201_43_103_106.csv"), na= c(' ','-'))
+# casos <- read.csv2(paste0(script_dir,"/Covid_SUB.csv"), na= c(' ','-'))
+ casos <- read.csv2(paste0(script_dir,"/Covid_SUB_DIA.csv"), na= c(' ','-'))
+
+#TETO max value máximoo valor
+teto <- max(casos %>% 
+    select(!c(Ano.Mês.Dia.Inicio.Sint , Total))
+  ,na.rm=TRUE) #+ 200
+
+
+#subprefeitura <- as.character(colnames(pin_date[1]))
+
+#Loops for subprefeituras
+for(n in seq(2,35)){
+subprefeitura <- as.character(colnames(casos[n]))
+# subprefeitura <- "Pinheiros"
+
+tmp <-
+casos %>%
+  select(subprefeitura,Ano.Mês.Dia.Inicio.Sint ) %>%
+  mutate(dia=as.Date(Ano.Mês.Dia.Inicio.Sint, "%d/%m/%Y"))%>%
+  #filter(dia >= "2020-05-01")
+  #year(as.Date("2020","%Y"))
+  #year(pin_date$dia) 
+  mutate(weeks=week(dia)) %>%
+  mutate(week = ifelse(year(dia) > year(as.Date("2020","%Y")),weeks+ 53,weeks ))
+
+
+
+tmp <- 
+  tmp %>%
+    group_by(week) %>%
+    filter(n() > 6) %>%
+    summarise(casos=sum(get(subprefeitura),na.rm = TRUE),data=mean(dia))
+
+
+
+###############
+outputDIR <- paste0(script_dir,"/plots")
+
+if (!dir.exists(outputDIR)) {dir.create(outputDIR)}
+
+plot <-
+  tmp %>%
+  filter(!week == "59") %>%
+  ggplot(aes(x = data, y = casos)) +
+  geom_point() +
+  geom_line() +
+  geom_smooth() 
+
+plot +
+  ggtitle("Casos de covid ", subprefeitura) +
+  scale_x_date(date_breaks = "months" , date_labels = "%b-%y") +
+  labs(caption = "Dados obtidos de http://tabnet.saude.prefeitura.sp.gov.br/cgi/tabcgi.exe?secretarias/saude/TABNET/RCOVID19/covid19.def \n Opções selecionadas Ano Mês dia Notificação, Subprefeitura, data(todas disponíveis) e casos confirmados \n Os dados foram filtrados para até a ultima semana completa ") +
+#  labs(caption = "") + 
+  xlab("")+
+  ggsave(
+    paste0(outputDIR, "/plot_", subprefeitura, ".png") ,
+    width = 50,
+    height = 20,
+    units = "cm"
+  )
+
+plot +
+  scale_y_continuous(limits = c(0, teto)) +
+  scale_x_date(date_breaks = "months" , date_labels = "%b-%y") +
+  ggsave(
+    paste0(outputDIR, "/plot_", subprefeitura, "_Fixed.png") ,
+    width = 50,
+    height = 20,
+    units = "cm"
+  )
+
+
+
+assign(paste(subprefeitura),tmp,envir=.GlobalEnv)
+
+
+
+#muda nome do dataframe #change data frame name dynamically
+#assign(paste("NEWNAME"),OLDNAME,envir=.GlobalEnv) #outside function
+
+#assign(paste("oi"),x,envir=.GlobalEnv)
+
+#end loop subs
+
+}
+
+
+```
+
+
+
+
+```{r covert to geo}
+#Carrega mapa da cidade
+      # library(sf)
+      # 
+      # mapa_cidade <- 
+      #   sf::st_read(paste0(script_dir,"/MAPA/DEINFO_SUBPREFEITURAS_2013.shp")) %>%
+      #   st_set_crs(5533) %>%  
+      #   st_transform(4326) 
+
+############################################################################
+# #Estudo e criação da lista de codigos
+
+# 
+# lista <- list()
+# 
+# for(n in seq(2,33)){
+# subprefeitura <- as.character(colnames(casos[n]))
+# lista[[length(lista) + 1]] <- subprefeitura
+# }
+# 
+# <-
+# as.data.frame(c(lista,mapa_cidade$NOME))
+
+
+# head(mapa_cidade$NOME)
+# data.frame(Reduce(rbind, lista),tmp2)
+# tmp <- 
+#   # as.data.frame(mapa_cidade$NOME) %>%
+#   data.frame(Reduce(rbind, lista),mapa_cidade$NOME,mapa_cidade$COD_SUBPRE)
+# write.csv2(tmp,paste0(script_dir,"/estudo.csv"))
+############################################################################
+
+# 
+# cod_subs <- read.csv2(paste0(script_dir,"/estudo_tratado.csv"),sep=",")
+
+
+```
+

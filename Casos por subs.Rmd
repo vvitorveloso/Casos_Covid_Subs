@@ -20,21 +20,17 @@ knitr::opts_chunk$set(echo = TRUE)
 # install.packages("devtools")
 # install.packages("tidyverse")
 
-library(tidyverse)
-library(devtools)
 
-#devtools::install_github("ajdamico/lodown")
 
 ```
 
 ```{r librarys}
-#load def files
-#install.packages("remotes")
-#remotes::install_github("dlill/conveniencefunctions")
 
 
 library(tidyverse)
+# library(devtools)
 library(lubridate)
+
 
 script_dir = dirname(rstudioapi::getActiveDocumentContext()$path)
 
@@ -43,18 +39,44 @@ script_dir = dirname(rstudioapi::getActiveDocumentContext()$path)
 ```
 
 
-```{r casos e plotagem}
+```{r data load}
 # casos <- read.csv2(paste0(script_dir,"/A191206201_43_103_106.csv"), na= c(' ','-'))
 # casos <- read.csv2(paste0(script_dir,"/Covid_SUB.csv"), na= c(' ','-'))
- casos <- read.csv2(paste0(script_dir,"/Covid_SUB_DIA.csv"), na= c(' ','-'))
+#casos <- read.csv2(paste0(script_dir,"/Covid_SUB_DIA_05032021.csv"), na= c(' ','-'),encoding = "Latin1")
+
+file <- paste0(script_dir,"/Covid_SUB_DIA_05032021_UTF8.csv")
+encode <- uchardet::detect_file_enc(file)
+
+casos <- read.table(file,skip = 4, nrows = length(readLines(file)) - 9, na= c(' ','-'),encoding = "Latin1",sep = ";",header = TRUE)
 
 #TETO max value máximoo valor
-teto <- max(casos %>% 
+teto_total <- max(casos %>% 
     select(!c(Ano.Mês.Dia.Inicio.Sint , Total))
   ,na.rm=TRUE) #+ 200
 
+teto <- max(casos[-nrow(casos),] %>% 
+    select(!c(Ano.Mês.Dia.Inicio.Sint , Total))
+  ,na.rm=TRUE) #+ 200
 
 #subprefeitura <- as.character(colnames(pin_date[1]))
+outputDIR <- paste0(script_dir,"/plots")
+
+out_plot <- paste0(script_dir,"/plots","/by_sub/")
+out_plot_fixed <- paste0(script_dir,"/plots","/fixed/")
+
+
+if (!dir.exists(outputDIR)) {dir.create(outputDIR)}
+if(!dir.exists(out_plot)){
+  dir.create(out_plot
+)  }
+if(!dir.exists(out_plot_fixed)){
+  dir.create(out_plot_fixed
+)  }
+
+
+```
+
+```{r loop}
 
 #Loops for subprefeituras
 for(n in seq(2,35)){
@@ -82,9 +104,8 @@ tmp <-
 
 
 ###############
-outputDIR <- paste0(script_dir,"/plots")
 
-if (!dir.exists(outputDIR)) {dir.create(outputDIR)}
+
 
 plot <-
   tmp %>%
@@ -101,22 +122,34 @@ plot +
 #  labs(caption = "") + 
   xlab("")+
   ggsave(
-    paste0(outputDIR, "/plot_", subprefeitura, ".png") ,
+    paste0(out_plot, subprefeitura, ".png") ,
     width = 50,
     height = 20,
     units = "cm"
   )
 
+ifelse(subprefeitura == "Total",
+plot +
+  scale_y_continuous(limits = c(0, teto_total)) +
+  scale_x_date(date_breaks = "months" , date_labels = "%b-%y") +
+  ggsave(
+    paste0(out_plot_fixed, subprefeitura, "_Fixed.png") ,
+    width = 50,
+    height = 20,
+    units = "cm"
+  )
+              
+       ,
 plot +
   scale_y_continuous(limits = c(0, teto)) +
   scale_x_date(date_breaks = "months" , date_labels = "%b-%y") +
   ggsave(
-    paste0(outputDIR, "/plot_", subprefeitura, "_Fixed.png") ,
+    paste0(out_plot_fixed, "/plot_", subprefeitura, "_Fixed.png") ,
     width = 50,
     height = 20,
     units = "cm"
   )
-
+)
 
 
 assign(paste(subprefeitura),tmp,envir=.GlobalEnv)

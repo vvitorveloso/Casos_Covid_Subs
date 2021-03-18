@@ -17,13 +17,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r installer}
 
-# install.packages("devtools")
-# install.packages("tidyverse")
-
 library(tidyverse)
-library(devtools)
+# library(devtools)
+library(lubridate)
 
-#devtools::install_github("ajdamico/lodown")
+
+script_dir = dirname(rstudioapi::getActiveDocumentContext()$path)
 
 ```
 
@@ -46,9 +45,44 @@ script_dir = dirname(rstudioapi::getActiveDocumentContext()$path)
 ```{r casos e plotagem}
 # casos <- read.csv2(paste0(script_dir,"/A191206201_43_103_106.csv"), na= c(' ','-'))
 # casos <- read.csv2(paste0(script_dir,"/Covid_SUB.csv"), na= c(' ','-'))
- casos <- read.csv2(paste0(script_dir,"/Covid_SUB_DIA.csv"), na= c(' ','-'))
- casos_semana <- read.csv2(paste0(script_dir,"/Covid_SUB_SEMANA.csv"), na= c(' ','-'))
- cod_subs <- read.csv2(paste0(script_dir,"/estudo_tratado.csv"),sep=",")
+ # casos <- read.csv2(paste0(script_dir,"/Covid_SUB_DIA.csv"), na= c(' ','-'))
+ # casos_semana <- read.csv2(paste0(script_dir,"/Covid_SUB_SEMANA.csv"), na= c(' ','-'))
+ 
+file <- paste0(script_dir,"/Covid_SUB_DIA_05032021_UTF8.csv")
+encode <- uchardet::detect_file_enc(file)
+
+casos <- read.table(file,skip = 4, nrows = length(readLines(file)) - 9, na= c(' ','-'),encoding = "Latin1",sep = ";",header = TRUE)
+
+cod_subs <- read.csv2(paste0(script_dir,"/estudo_tratado.csv"),sep=",")
+
+
+
+#TETO max value máximoo valor
+teto_total <- max(casos %>% 
+    select(!c(Ano.Mês.Dia.Inicio.Sint , Total))
+  ,na.rm=TRUE) #+ 200
+
+teto <- max(casos[-nrow(casos),] %>% 
+    select(!c(Ano.Mês.Dia.Inicio.Sint , Total))
+  ,na.rm=TRUE) #+ 200
+
+#subprefeitura <- as.character(colnames(pin_date[1]))
+outputDIR <- paste0(script_dir,"/plots")
+
+out_plot <- paste0(script_dir,"/plots","/by_sub/")
+out_plot_fixed <- paste0(script_dir,"/plots","/fixed/")
+
+
+if (!dir.exists(outputDIR)) {dir.create(outputDIR)}
+if(!dir.exists(out_plot)){
+  dir.create(out_plot
+)  }
+if(!dir.exists(out_plot_fixed)){
+  dir.create(out_plot_fixed
+)  }
+
+
+
 
 casos_semana_new <-
   casos_semana %>%
@@ -170,6 +204,41 @@ mutate(a=year(as.Date(ano,"%Y")))
 ```
 
 
+```{r}
+
+
+# for(n in seq(2,35)){
+# subprefeitura <- as.character(colnames(casos[n]))
+subprefeitura <- "Pinheiros"
+
+tmp <-
+casos %>%
+  # select(subprefeitura,Ano.Mês.Dia.Inicio.Sint ) %>%
+  mutate(dia=as.Date(Ano.Mês.Dia.Inicio.Sint, "%d/%m/%Y"))%>%
+  #filter(dia >= "2020-05-01")
+  #year(as.Date("2020","%Y"))
+  #year(pin_date$dia) 
+  mutate(weeks=week(dia)) %>%
+  mutate(week = ifelse(year(dia) > year(as.Date("2020","%Y")),weeks+ 53,weeks )) %>%
+  select(-Ano.Mês.Dia.Inicio.Sint,-weeks)
+
+tmpx <- 
+  tmp %>%
+    group_by(week) %>%
+    filter(n() > 6) %>%
+    summarise(casos=sum(get(subprefeitura),na.rm = TRUE),data=mean(dia))
+
+tmp_mean <-
+    tmp %>%
+    group_by(week) %>%
+    filter(n() > 6) %>%
+        summarize_all(funs(mean(., na.rm=TRUE)))
+
+as.data.frame(tmp_mean)
+
+
+# }
+```
 
 
 ```{r covert to geo}
@@ -208,5 +277,122 @@ mapa_cidade <-
 # cod_subs <- read.csv2(paste0(script_dir,"/estudo_tratado.csv"),sep=",")
 
 
+```
+
+```{r where magic happen}
+
+# test1 <- as.data.frame(tmp_mean[1,],)
+# 
+# test1 <-
+# test1 %>%
+#   select(-Ign,-Total,-week) %>%
+# #to transpose (Matrix Transpose)
+# #?t()
+#   t()
+# 
+# test1
+# 
+# 
+# test2<-
+# merge(test1,cod_subs,by.x=0,by.y = "Sub",all = TRUE)
+# 
+# test2<-
+#   test2 %>%
+#   mutate(V1=as.numeric(V1)) %>%
+#   select(mapa_cidade.COD_SUBPRE,V1)
+# 
+# x <-
+# merge(mapa_cidade,test2,by.x="COD_SUBPRE" ,by.y = "mapa_cidade.COD_SUBPRE",all = TRUE)
+
+```
+
+```{r simplified}
+
+tmp=as.data.frame(tmp_mean) %>%
+    select(-Ign,-Total,-week,dia)
+
+
+#Linha 1
+por_linha <- as.data.frame(tmp_mean[1,],)
+#loop
+
+colnames(tmp_mean)
+
+dia=por_linha$dia
+
+por_linha <-
+por_linha %>%
+  select(-Ign,-Total,-week,dia) %>%
+  t()
+
+linha_codigo_sub <-
+merge(por_linha,cod_subs,by.x=0,by.y = "Sub",all = TRUE) %>%
+  mutate(V1=as.numeric(V1)) %>%
+  select(mapa_cidade.COD_SUBPRE,V1)
+
+x <-
+merge(mapa_cidade,linha_codigo_sub,by.x="COD_SUBPRE" ,by.y = "mapa_cidade.COD_SUBPRE",all = TRUE)
+
+
+
+```
+
+```{r for test}
+i=10
+for(i in 1:nrow(tmp_mean)){
+#  print(tmp_mean[i,])
+por_linha <- tmp_mean[i,]
+#loop
+#colnames(tmp_mean)
+
+#dia=por_linha$dia
+#transforma em coluna e filtra
+por_linha <-
+por_linha %>%
+  select(-Ign,-Total,-week,dia) %>%
+  t()
+
+#pega data
+data  = por_linha[nrow(por_linha)]
+
+#remove linha da data
+por_linha <-
+  por_linha[!row.names(por_linha)%in%"dia",] %>%
+  as.data.frame()
+
+
+linha_codigo_sub <-
+merge(por_linha,cod_subs,by.x=0,by.y = "Sub",all = TRUE) %>%
+  mutate(!!data := as.numeric(.)) #%>%
+  select(mapa_cidade.COD_SUBPRE,!!data )
+
+# as.character()
+# 
+# linha_codigo_sub <-
+# merge(por_linha,cod_subs,by.x=0,by.y = "Sub",all = TRUE) %>%
+#   mutate(!!data := as.numeric(V1)) #%>%
+#   select(mapa_cidade.COD_SUBPRE,!!data )
+
+x <-
+merge(mapa_cidade,linha_codigo_sub,by.x="COD_SUBPRE" ,by.y = "mapa_cidade.COD_SUBPRE",all = FALSE)
+
+
+
+ dia 
+x  
+  
+}
+
+
+```
+
+
+
+```{r plot test 1}
+  ggplot(x) +
+    ggtitle("Casos de covid semana do dia ", dia) +
+    geom_sf(data=x,color="transparent", aes(fill=V1,colour = white))+
+    geom_sf(color="black",data=mapa_cidade, fill="transparent")+
+    scale_fill_gradient(low = "blue", high = "red")
 ```
 

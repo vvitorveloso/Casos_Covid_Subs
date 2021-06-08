@@ -24,6 +24,13 @@ library(lubridate)
 
 script_dir = dirname(rstudioapi::getActiveDocumentContext()$path)
 
+
+outputDIR=paste0(script_dir,"/plots/maps/")
+
+
+
+
+
 ```
 
 ```{r librarys}
@@ -67,51 +74,57 @@ teto <- max(casos[-nrow(casos),] %>%
   ,na.rm=TRUE) #+ 200
 
 #subprefeitura <- as.character(colnames(pin_date[1]))
-outputDIR <- paste0(script_dir,"/plots")
+base_DIR <- paste0(script_dir,"/plots")
 
 out_plot <- paste0(script_dir,"/plots","/by_sub/")
 out_plot_fixed <- paste0(script_dir,"/plots","/fixed/")
 
 
-if (!dir.exists(outputDIR)) {dir.create(outputDIR)}
+if (!dir.exists(base_DIR)) {
+  dir.create(base_DIR)}
+
 if(!dir.exists(out_plot)){
   dir.create(out_plot
 )  }
 if(!dir.exists(out_plot_fixed)){
   dir.create(out_plot_fixed
-)  }
+  )  }
+if (!dir.exists(outputDIR)) {
+  dir.create(outputDIR)}
 
 
 
-
-casos_semana_new <-
-  casos_semana %>%
-  mutate(semana = gsub("Semana ", "", Sem.Epid.Início.Sintoma)) %>%
-  mutate(ano = sub("*..\\/", "", semana)) %>%
-  mutate(semana = gsub("\\/.*", "", semana)) %>%
-  mutate(ano=year(as.Date(ano,"%Y"))) %>%
-  mutate(semana=as.numeric(semana)) %>%
-  filter(row_number() <= n()-1)
-
-casos_semana_new <-
-  casos_semana_new %>%
-  #remove o absurdo no final da tabela
-  filter(row_number() <= n()-3)
-
-
-
-
-
-x<-
-casos_semana_new %>%
-  mutate(semana = ifelse(ano > year(as.Date("2020","%Y")),semana+ 53,semana ))
-
-casos_semana_new %>%
-  year(as.date(ano))
-
-
-casos_semana_new %>%
-mutate(a=year(as.Date(ano,"%Y")))
+# 
+# casos_semana_new <-
+#   casos_semana %>%
+#   mutate(semana = gsub("Semana ", "", Sem.Epid.Início.Sintoma)) %>%
+#   mutate(ano = sub("*..\\/", "", semana)) %>%
+#   mutate(semana = gsub("\\/.*", "", semana)) %>%
+#   mutate(ano=year(as.Date(ano,"%Y"))) %>%
+#   mutate(semana=as.numeric(semana)) %>%
+#   filter(row_number() <= n()-1)
+# 
+# 
+# 
+# casos_semana_new <-
+#   casos_semana_new %>%
+#   #remove o absurdo no final da tabela
+#   filter(row_number() <= n()-3)
+# 
+# 
+# 
+# 
+# 
+# x<-
+# casos_semana_new %>%
+#   mutate(semana = ifelse(ano > year(as.Date("2020","%Y")),semana+ 53,semana ))
+# 
+# casos_semana_new %>%
+#   year(as.date(ano))
+# 
+# 
+# casos_semana_new %>%
+# mutate(a=year(as.Date(ano,"%Y")))
 
 
 #   mutate(week = ifelse(year(dia) > year(as.Date("2020","%Y")),weeks+ 53,weeks ))
@@ -308,6 +321,8 @@ mapa_cidade <-
 
 ```{r simplified}
 
+#Testing zone? i dont remember kkk
+
 tmp=as.data.frame(tmp_mean) %>%
     select(-Ign,-Total,-week,dia)
 
@@ -327,7 +342,7 @@ por_linha %>%
 
 linha_codigo_sub <-
 merge(por_linha,cod_subs,by.x=0,by.y = "Sub",all = TRUE) %>%
-  mutate(V1=as.numeric(V1)) %>%
+  mutate(V1=as.numeric(casos)) %>%
   select(mapa_cidade.COD_SUBPRE,V1)
 
 x <-
@@ -338,7 +353,7 @@ merge(mapa_cidade,linha_codigo_sub,by.x="COD_SUBPRE" ,by.y = "mapa_cidade.COD_SU
 ```
 
 ```{r for test}
-i=10
+#i=10
 for(i in 1:nrow(tmp_mean)){
 #  print(tmp_mean[i,])
 por_linha <- tmp_mean[i,]
@@ -352,6 +367,7 @@ por_linha %>%
   select(-Ign,-Total,-week,dia) %>%
   t()
 
+
 #pega data
 data  = por_linha[nrow(por_linha)]
 
@@ -360,27 +376,64 @@ por_linha <-
   por_linha[!row.names(por_linha)%in%"dia",] %>%
   as.data.frame()
 
+colnames(por_linha) <- c('casos')
+
+  
+  colnames(a)<- c('casos')
+
+por_linha =
+  por_linha %>% mutate(casos=as.numeric(unlist(casos)))
+
+
+
+
 
 linha_codigo_sub <-
-merge(por_linha,cod_subs,by.x=0,by.y = "Sub",all = TRUE) %>%
-  mutate(!!data := as.numeric(.)) #%>%
-  select(mapa_cidade.COD_SUBPRE,!!data )
+merge(por_linha,cod_subs,by.x=0,by.y = "Sub",all = TRUE)# %>%
+  #mutate(!!data := as.numeric(a)) #%>%
+  #select(mapa_cidade.COD_SUBPRE,!!data )
 
 # as.character()
-# 
+# # 
 # linha_codigo_sub <-
 # merge(por_linha,cod_subs,by.x=0,by.y = "Sub",all = TRUE) %>%
 #   mutate(!!data := as.numeric(V1)) #%>%
 #   select(mapa_cidade.COD_SUBPRE,!!data )
 
+# x <-
+# merge(mapa_cidade,linha_codigo_sub,by.x="COD_SUBPRE" ,by.y = "mapa_cidade.COD_SUBPRE",all = TRUE)
 x <-
-merge(mapa_cidade,linha_codigo_sub,by.x="COD_SUBPRE" ,by.y = "mapa_cidade.COD_SUBPRE",all = FALSE)
+merge(mapa_cidade,linha_codigo_sub,by.x="NOME" ,by.y = "mapa_cidade.NOME",all = FALSE)
 
 
+#################################IMPORTANTE PARA DEBUG
+x %>% filter(NOME == "SE")
+mapa_cidade %>% filter(NOME == "SE")
+linha_codigo_sub %>% filter( mapa_cidade.NOME == "SE")
+###############################
 
- dia 
-x  
-  
+
+# linha_codigo_sub <-
+# merge(por_linha,cod_subs,by.x=0,by.y = "Sub",all = TRUE) %>%
+#   mutate(!!data := as.numeric(casos)) #%>%
+#   select(mapa_cidade.COD_SUBPRE,!!data )
+#################################IMPORTANTE PARA DEBUG
+check_x <- st_drop_geometry(x)
+################################
+
+  ggplot(x) +
+    ggtitle("Casos de covid semana do dia ", data) +
+    geom_sf(data=x,color="transparent", aes(fill=(casos),colour = white))+
+    geom_sf(color="black",data=mapa_cidade, fill="transparent")+
+     scale_fill_gradient(low = "blue", high = "red")+
+     ggsave(
+     paste0(outputDIR,"Casos de covid semana do dia ", data, ".png") ,
+     width = 50,
+     height = 20,
+     units = "cm"
+   )
+
+
 }
 
 
@@ -389,10 +442,17 @@ x
 
 
 ```{r plot test 1}
-  ggplot(x) +
-    ggtitle("Casos de covid semana do dia ", dia) +
-    geom_sf(data=x,color="transparent", aes(fill=V1,colour = white))+
-    geom_sf(color="black",data=mapa_cidade, fill="transparent")+
-    scale_fill_gradient(low = "blue", high = "red")
-```
+#Only Testing zone, plot is done over loop
 
+  ggplot(x) +
+    ggtitle("Casos de covid semana do dia ", data) +
+    geom_sf(data=x,color="transparent", aes(fill=(casos),colour = white))+
+    geom_sf(color="black",data=mapa_cidade, fill="transparent")+
+     # scale_fill_gradient(low = "blue", high = "red")+
+     ggsave(
+     paste0(outputDIR,"Casos de covid semana do dia ", data, ".png") ,
+     width = 50,
+     height = 20,
+     units = "cm"
+   )
+```
